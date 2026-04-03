@@ -2,16 +2,23 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { Suspense } from 'react'
+import Link from 'next/link'
 
 function LoginForm() {
   const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState<string | null>(null)
   const searchParams = useSearchParams()
+  const router = useRouter()
   const returnUrl = searchParams.get('returnUrl') || '/dashboard'
+  const message = searchParams.get('message')
 
   const handleGoogleLogin = async () => {
     setLoading(true)
+    setError(null)
     const supabase = createClient()
     await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -19,6 +26,45 @@ function LoginForm() {
         redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(returnUrl)}`,
       },
     })
+  }
+
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email || !password) return
+    setLoading(true)
+    setError(null)
+
+    const supabase = createClient()
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (authError) {
+      setLoading(false)
+      if (authError.message.includes('Invalid login credentials')) {
+        setError('E-Mail oder Passwort falsch.')
+      } else if (authError.message.includes('Email not confirmed')) {
+        setError('Bitte bestätige zuerst deine E-Mail-Adresse.')
+      } else {
+        setError(authError.message)
+      }
+      return
+    }
+
+    router.push(returnUrl)
+  }
+
+  const inputStyle = {
+    width: '100%',
+    background: '#1a1a2e',
+    color: '#ffffff',
+    padding: '0.875rem 1rem',
+    borderRadius: '0.5rem',
+    border: '1px solid rgba(255,255,255,0.1)',
+    fontSize: '1rem',
+    outline: 'none',
+    boxSizing: 'border-box' as const,
   }
 
   return (
@@ -65,10 +111,41 @@ function LoginForm() {
           }}>
             Willkommen zurück
           </h1>
-          <p style={{ color: '#8888aa', marginBottom: '2rem', fontSize: '0.9rem' }}>
+          <p style={{ color: '#8888aa', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
             Melde dich an um deine Gruppe zu verwalten
           </p>
 
+          {/* Success/Info message */}
+          {message && (
+            <div style={{
+              background: 'rgba(0, 212, 255, 0.1)',
+              border: '1px solid rgba(0, 212, 255, 0.3)',
+              borderRadius: '0.5rem',
+              padding: '0.75rem 1rem',
+              marginBottom: '1.5rem',
+              color: '#00d4ff',
+              fontSize: '0.85rem',
+            }}>
+              {message}
+            </div>
+          )}
+
+          {/* Error */}
+          {error && (
+            <div style={{
+              background: 'rgba(255, 59, 59, 0.1)',
+              border: '1px solid rgba(255, 59, 59, 0.3)',
+              borderRadius: '0.5rem',
+              padding: '0.75rem 1rem',
+              marginBottom: '1.5rem',
+              color: '#ff3b3b',
+              fontSize: '0.85rem',
+            }}>
+              {error}
+            </div>
+          )}
+
+          {/* Google Login */}
           <button
             onClick={handleGoogleLogin}
             disabled={loading}
@@ -103,6 +180,73 @@ function LoginForm() {
               </>
             )}
           </button>
+
+          {/* Divider */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            margin: '1.5rem 0',
+            gap: '1rem',
+          }}>
+            <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.1)' }} />
+            <span style={{ color: '#8888aa', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>oder</span>
+            <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.1)' }} />
+          </div>
+
+          {/* Email/Password Form */}
+          <form onSubmit={handleEmailLogin} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <input
+              type="email"
+              placeholder="E-Mail-Adresse"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              style={inputStyle}
+            />
+            <input
+              type="password"
+              placeholder="Passwort"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+              style={inputStyle}
+            />
+
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                width: '100%',
+                background: loading ? '#1a1a2e' : '#00d4ff',
+                color: '#000000',
+                fontWeight: '600',
+                padding: '0.875rem 1.5rem',
+                borderRadius: '0.5rem',
+                border: 'none',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                transition: 'all 0.2s',
+                fontSize: '1rem',
+              }}
+            >
+              {loading ? 'Wird geladen...' : 'Mit E-Mail anmelden'}
+            </button>
+          </form>
+
+          {/* Links */}
+          <div style={{
+            marginTop: '1.25rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            fontSize: '0.85rem',
+          }}>
+            <Link href="/reset-password" style={{ color: '#8888aa', textDecoration: 'none' }}>
+              Passwort vergessen?
+            </Link>
+            <Link href="/register" style={{ color: '#00d4ff', textDecoration: 'none', fontWeight: '500' }}>
+              Konto erstellen
+            </Link>
+          </div>
 
           <p style={{
             marginTop: '1.5rem',

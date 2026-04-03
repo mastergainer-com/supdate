@@ -18,6 +18,8 @@ export default async function DashboardPage() {
 
   if (!profile) redirect('/onboarding')
 
+  const onboardingDone = !!profile.onboarding_completed_at
+
   // Get user's groups
   const { data: memberGroups } = await supabase
     .from('group_members')
@@ -76,6 +78,30 @@ export default async function DashboardPage() {
             <p style={{ color: '#ffffff', fontWeight: '500', lineHeight: '1.5' }}>{profile.goal}</p>
           </div>
         </div>
+
+        {/* Waiting for group banner */}
+        {onboardingDone && groups.length === 0 && (
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(0,200,100,0.12) 0%, rgba(0,200,100,0.04) 100%)',
+            border: '1px solid rgba(0,200,100,0.25)',
+            borderRadius: '1rem',
+            padding: '1.25rem 1.5rem',
+            marginBottom: '2rem',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '1rem',
+          }}>
+            <span style={{ fontSize: '1.5rem' }}>✅</span>
+            <div>
+              <p style={{ color: '#00c864', fontWeight: '600', marginBottom: '0.25rem' }}>
+                Onboarding abgeschlossen!
+              </p>
+              <p style={{ color: '#8888aa', fontSize: '0.9rem', lineHeight: '1.5' }}>
+                Wir finden gerade deine Gruppe — melde dich kurz geduldig... 🙏
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Groups header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>

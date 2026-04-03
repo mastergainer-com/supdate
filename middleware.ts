@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Protected routes
-  const protectedPaths = ['/dashboard', '/groups', '/onboarding']
+  const protectedPaths = ['/dashboard', '/groups', '/onboarding', '/admin']
   const isProtected = protectedPaths.some((p) => pathname.startsWith(p))
 
   if (isProtected && !user) {
@@ -44,11 +44,34 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // If logged in and going to login page, redirect to dashboard
-  if (user && pathname === '/login') {
+  // If logged in and going to auth pages, redirect to dashboard
+  if (user && (pathname === '/login' || pathname === '/register' || pathname === '/reset-password')) {
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'
     return NextResponse.redirect(url)
+  }
+
+  // For authenticated users on non-onboarding protected routes: check onboarding completion
+  if (user && isProtected && !pathname.startsWith('/onboarding')) {
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('onboarding_completed_at, is_admin')
+      .eq('id', user.id)
+      .single()
+
+    // No profile or onboarding not completed → redirect to onboarding
+    if (!profile || !profile.onboarding_completed_at) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/onboarding'
+      return NextResponse.redirect(url)
+    }
+
+    // Admin routes: check is_admin
+    if (pathname.startsWith('/admin') && !profile.is_admin) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/dashboard'
+      return NextResponse.redirect(url)
+    }
   }
 
   return supabaseResponse
