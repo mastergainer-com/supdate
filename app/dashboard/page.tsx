@@ -50,15 +50,79 @@ export default async function DashboardPage() {
           sup<span style={{ color: '#00d4ff' }}>.</span>date
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <span style={{ color: '#8888aa', fontSize: '0.875rem' }}>
+          <Link href="/settings" style={{ color: '#8888aa', fontSize: '0.875rem', textDecoration: 'none' }}>
             {profile.name || user.email}
-          </span>
+          </Link>
           <LogoutButton />
         </div>
       </nav>
 
       {/* Main */}
       <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '2rem 1.5rem' }}>
+        {/* Streak & Stats Row */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+          {/* Streak Card */}
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(255,107,53,0.2) 0%, rgba(255,140,0,0.1) 100%)',
+            border: '1px solid rgba(255,107,53,0.3)',
+            borderRadius: '1rem',
+            padding: '1.25rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+          }}>
+            <span style={{ fontSize: '2rem' }}>🔥</span>
+            <div>
+              <p style={{ color: '#ff8c42', fontSize: '1.75rem', fontWeight: '800' }}>
+                {profile.streak_count || 0}
+              </p>
+              <p style={{ color: '#8888aa', fontSize: '0.75rem' }}>Wochen Streak</p>
+            </div>
+          </div>
+
+          {/* Updates Delivered */}
+          <div style={{
+            background: '#13131f',
+            border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: '1rem',
+            padding: '1.25rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+          }}>
+            <span style={{ fontSize: '2rem' }}>✅</span>
+            <div>
+              <p style={{ color: '#00c864', fontSize: '1.5rem', fontWeight: '700' }}>
+                {profile.total_delivered || 0}
+              </p>
+              <p style={{ color: '#8888aa', fontSize: '0.75rem' }}>Updates geliefert</p>
+            </div>
+          </div>
+
+          {/* Pause Status */}
+          {profile.pause_until && new Date(profile.pause_until) > new Date() && (
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(255,193,7,0.15) 0%, rgba(255,160,0,0.08) 100%)',
+              border: '1px solid rgba(255,193,7,0.3)',
+              borderRadius: '1rem',
+              padding: '1.25rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1rem',
+            }}>
+              <span style={{ fontSize: '2rem' }}>🌴</span>
+              <div>
+                <p style={{ color: '#ffc107', fontSize: '0.9rem', fontWeight: '600' }}>
+                  In Pause
+                </p>
+                <p style={{ color: '#8888aa', fontSize: '0.7rem' }}>
+                  bis {new Date(profile.pause_until).toLocaleDateString('de-DE')}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Goal Banner */}
         <div style={{
           background: 'linear-gradient(135deg, rgba(0,212,255,0.1) 0%, rgba(0,212,255,0.03) 100%)',

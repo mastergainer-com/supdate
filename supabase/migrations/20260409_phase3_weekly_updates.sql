@@ -311,7 +311,7 @@ SELECT
   u.created_at,
   u.updated_at
 FROM updates u
-JOIN user_profiles up ON up.user_id = u.user_id
+JOIN user_profiles up ON up.id = u.user_id
 JOIN groups g ON g.id = u.group_id;
 
 -- ============================================================
