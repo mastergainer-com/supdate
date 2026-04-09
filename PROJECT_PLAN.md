@@ -25,16 +25,23 @@
 - ✅ Gruppe beitreten (/join/[token])
 - ✅ Member-Übersicht
 
-### Phase 3: Sprint 2 — Weekly Updates & Feed (KW 13–14)
+### Phase 3: Sprint 2 — Weekly Updates & Feed ✅ DONE (09.04.2026)
 **Ziel:** Kern-Feature — wöchentliche Updates + Transparenz
 
 | Task | Owner | Status |
 |---|---|---|
-| Weekly Update Formular (3 Felder, <2 Min) | Gibor | 🔲 |
-| Gruppen-Feed (alle Updates sichtbar) | Gibor | 🔲 |
-| Status-Badges (✅ Geliefert / ⚠️ Spät / ❌ Nicht geliefert) | Gibor | 🔲 |
-| Update-Deadline pro Gruppe (konfigurierbar) | Gibor | 🔲 |
-| Missed Update Alert (automatisch) | Gibor | 🔲 |
+| Weekly Update Formular (3 Felder, <2 Min) | Gibor | ✅ |
+| Gruppen-Feed (alle Updates sichtbar) | Gibor | ✅ |
+| Status-Badges (✅ Geliefert / ⚠️ Spät / ❌ Nicht geliefert) | Gibor | ✅ |
+| Update-Deadline pro Gruppe (konfigurierbar) | Gibor | ✅ |
+| Missed Update Alert (automatisch) | Gibor | ✅ |
+
+**Neue Features:**
+- `/groups/[id]/update` — Weekly Update Formular mit Auto-Save
+- `/groups/[id]/settings` — Deadline, Reminders, Alerts konfigurierbar
+- `group_feed` View — Chronologischer Feed mit Status-Badges
+- Filter nach User/Status im Feed
+- Datenbank: `updates`, `group_settings`, `update_alerts` Tabellen
 
 ### Phase 4: Sprint 3 — Matching & Onboarding (KW 15–16)
 **Ziel:** Bewerbungs-Flow + manuelles Matching-Dashboard
@@ -100,8 +107,8 @@
 
 ```
 KW 12 ████████████████ Phase 1+2 ✅ Foundation + Auth
-KW 13 ████████░░░░░░░░ Phase 3: Weekly Updates
-KW 14 ████████░░░░░░░░ Phase 3: Feed + Badges
+KW 13 ████████████████ Phase 3 ✅ Weekly Updates
+KW 14 ████████████████ Phase 3 ✅ Feed + Badges
 KW 15 ░░░░░░░░░░░░░░░░ Phase 4: Matching Onboarding
 KW 16 ░░░░░░░░░░░░░░░░ Phase 4: Admin Dashboard
 KW 17 ░░░░░░░░░░░░░░░░ Phase 5: Notifications
