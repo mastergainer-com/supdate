@@ -29,7 +29,6 @@ export interface GroupFeedItem {
   user_id: string;
   group_id: string;
   user_name: string;
-  user_avatar?: string;
   group_name: string;
   accomplished: string;
   planned: string;

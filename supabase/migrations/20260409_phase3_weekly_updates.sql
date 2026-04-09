@@ -294,7 +294,6 @@ SELECT
   u.user_id,
   u.group_id,
   up.name AS user_name,
-  up.avatar_url AS user_avatar,
   g.name AS group_name,
   u.accomplished,
   u.planned,
