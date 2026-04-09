@@ -24,7 +24,7 @@ export default async function WeeklyUpdatePage({ params }: PageProps) {
   
   if (!membership) redirect('/dashboard');
   
-  const group = membership.groups as { id: string; name: string };
+  const group = membership.groups as unknown as { id: string; name: string };
   
   // Aktuelle Woche berechnen
   const now = new Date();

@@ -25,7 +25,7 @@ export default async function GroupSettingsPage({ params }: PageProps) {
   if (!membership) redirect('/dashboard')
   if (membership.role !== 'admin') redirect(`/groups/${groupId}`)
   
-  const group = membership.groups as { id: string; name: string }
+  const group = membership.groups as unknown as { id: string; name: string }
   
   // Lade bestehende Settings
   const { data: settings } = await supabase
