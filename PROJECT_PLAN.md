@@ -92,7 +92,7 @@
 | Vercel (supdate-app) | ✅ Deployed |
 | Resend (Email) | ✅ DKIM verified |
 | Google OAuth | ✅ Konfiguriert |
-| GitHub Repo | ✅ jochen-dotcom/supdate |
+| GitHub Repo | ✅ mastergainer-com/supdate |
 
 ---
 
