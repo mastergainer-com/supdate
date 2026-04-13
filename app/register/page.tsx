@@ -38,27 +38,30 @@ export default function RegisterPage() {
     setLoading(true)
     setError(null)
 
-    const supabase = createClient()
-    const { error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/onboarding`,
-      },
-    })
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
 
-    setLoading(false)
+      const data = await res.json()
 
-    if (authError) {
-      if (authError.message.includes('already registered')) {
-        setError('Diese E-Mail ist bereits registriert. Melde dich stattdessen an.')
-      } else {
-        setError(authError.message)
+      if (!res.ok) {
+        if (data.error?.includes('already registered')) {
+          setError('Diese E-Mail ist bereits registriert. Melde dich stattdessen an.')
+        } else {
+          setError(data.error || 'Registrierung fehlgeschlagen')
+        }
+        setLoading(false)
+        return
       }
-      return
-    }
 
-    setSuccess(true)
+      setSuccess(true)
+    } catch (err) {
+      setError('Netzwerkfehler. Bitte versuche es erneut.')
+      setLoading(false)
+    }
   }
 
   const inputStyle = {
