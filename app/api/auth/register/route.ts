@@ -44,20 +44,38 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to create user' }, { status: 500 })
     }
 
-    // Generate verification token
-    const { data: tokenData, error: tokenError } = await supabase.auth.admin.generateLink({
+    // Create user profile entry
+    const { error: profileError } = await supabase
+      .from('user_profiles')
+      .insert({
+        id: authData.user.id,
+        user_id: authData.user.id,
+        email: email,
+        onboarding_step: 0,
+      })
+
+    if (profileError) {
+      console.error('Profile creation error:', profileError)
+      // Don't fail registration if profile creation fails
+    }
+
+    // Generate verification OTP
+    const { data: otpData, error: otpError } = await supabase.auth.admin.generateLink({
       type: 'signup',
       email,
       password,
+      options: {
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://app.sup.date'}/auth/callback?next=/onboarding`,
+      }
     })
 
-    if (tokenError) {
-      console.error('Token error:', tokenError)
+    if (otpError) {
+      console.error('OTP error:', otpError)
       return NextResponse.json({ error: 'Failed to generate verification link' }, { status: 500 })
     }
 
-    // Extract token from URL
-    const verificationUrl = tokenData.properties?.action_link
+    // Use the action_link from Supabase
+    const verificationUrl = otpData.properties?.action_link
     if (!verificationUrl) {
       return NextResponse.json({ error: 'Failed to generate verification URL' }, { status: 500 })
     }
