@@ -31,7 +31,7 @@ export default function OnboardingStep2() {
     if (!user) { router.push('/login'); return }
 
     const { error: dbError } = await supabase.from('user_profiles').upsert({
-      id: user.id,
+      user_id: user.id,
       goal: form.goal.trim(),
       why: form.why.trim() || null,
       horizon: form.horizon || null,
