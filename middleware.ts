@@ -56,7 +56,7 @@ export async function middleware(request: NextRequest) {
     const { data: profile } = await supabase
       .from('user_profiles')
       .select('onboarding_completed_at, is_admin')
-      .eq('id', user.id)
+      .eq('user_id', user.id)
       .single()
 
     // No profile or onboarding not completed → redirect to onboarding
