@@ -34,7 +34,8 @@ export default function OnboardingStep1() {
     if (!user) { router.push('/login'); return }
 
     const updates: Record<string, unknown> = {
-      user_id: user.id,
+      id: user.id,
+      email: user.email,
       commitment_level: form.commitment_level,
       availability_hours_week: Number(form.availability_hours_week),
       onboarding_step: 1,

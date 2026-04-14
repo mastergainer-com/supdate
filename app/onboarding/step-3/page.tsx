@@ -56,7 +56,7 @@ export default function OnboardingStep3() {
 
     // Update profile
     const updates: Record<string, unknown> = {
-      user_id: user.id,
+      id: user.id,
       onboarding_step: 3,
       commitment_confirmed: true,
       onboarding_completed_at: now,
